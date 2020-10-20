@@ -1,0 +1,27 @@
+#!/bin/sh
+
+START_BELL="/usr/local/share/meditation-timer/bell1.mp3"
+END_BELL="/usr/local/share/meditation-timer/bell1.mp3"
+INTERMITTENT_BELL="/usr/local/share/meditation-timer/bell2.mp3"
+
+if [ "$#" -eq 1 ]; then
+    echo Meditation begun
+    mpv $START_BELL > /dev/null
+    sleep "$(( 60 * $1 ))"
+    echo Meditation over
+    mpv $END_BELL > /dev/null
+elif [ "$#" -eq 2 ]; then
+    mpv $START_BELL > /dev/null
+    echo Meditation begun
+    for (( i = 0; i < "$((($1 / $2) - 1))"; i++ )); do
+	sleep "$((60 * $2))"
+	echo Intermittent bell
+	mpv $INTERMITTENT_BELL > /dev/null
+    done
+    sleep "$((60 * $2))"
+    echo Meditation over
+    mpv $END_BELL > /dev/null
+else
+    echo Error. Proper use:
+    echo meditation-timer [total minutes] \(optional minutes between intermittent bells\)
+fi
